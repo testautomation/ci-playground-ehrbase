@@ -115,7 +115,6 @@ COPY ./service/src ./service/src
 RUN mvn compile dependency:go-offline
 
 # BUILD EHRBASE (AND STORE ALL DEPENDENCIES)
-RUN mkdir -p /home/ehrbase
 COPY . .
 RUN ls -la ./
 RUN mvn package -Dmaven.javadoc.skip=true

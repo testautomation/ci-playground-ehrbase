@@ -1,7 +1,8 @@
 #!/bin/bash
 
 docker run -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 \
-           --name ehrdb ehrbaseorg/ehrbase-postgres:latest
+            --network ehrbase-net \
+            --name ehrdb ehrbaseorg/ehrbase-postgres:latest
 
 while ! (docker container logs ehrdb | fgrep -q "database system is ready to accept connections");
     do sleep 1;
