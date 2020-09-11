@@ -1,5 +1,5 @@
 #!/bin/bash
-
+docker network create ehrbase-net
 docker run -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 \
             --network ehrbase-net \
             --name ehrdb ehrbaseorg/ehrbase-postgres:latest

@@ -72,7 +72,14 @@ tasks:
     desc: START POSTGRES DB DOCKER CONTAINER
     cmds:
       - echo ... starting DB server ...
-      - docker run --name ehrdb -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e DISABLE_SECURITY=true -d -p 5432:5432 ehrbaseorg/ehrbase-database-docker:11.5
+      - |
+        docker run --name ehrdb \
+                   --network ehrbase-net \
+                   -e POSTGRES_USER=postgres \
+                   -e POSTGRES_PASSWORD=postgres \
+                   -e DISABLE_SECURITY=true \
+                   -d -p 5432:5432 \
+                   ehrbaseorg/ehrbase-database-docker:11.5
       - echo ... DB server started.
 
   stopdb:
