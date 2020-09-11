@@ -1,0 +1,32 @@
+# FROM nestybox/alpine-docker:latest AS build
+FROM nestybox/alpine-supervisord-docker AS build
+WORKDIR ~/ehrbase
+# RUN dockerd > /var/log/dockerd.log 2>&1 & 
+# RUN sleep 2
+# RUN tail /var/log/dockerd.log
+RUN docker version
+
+
+# FROM ehrbaseorg/ehrbase-postgres:latest AS build
+# WORKDIR /ehrbase
+
+# START DB (is a prerequisite to build ehrbase - This is weird, I know!)
+RUN docker run --name ehrdb -e POSTGRES_PASSWORD=postgres -d -p 5432:5432 ehrbaseorg/ehrbase-postgres:latest
+
+# INSTALL JAVA 11 JDK
+RUN apk --no-cache add openjdk11 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
+  && java --version
+
+# INSTALL MAVEN
+ENV MAVEN_VERSION 3.6.3
+ENV MAVEN_HOME /usr/lib/mvn
+ENV PATH $MAVEN_HOME/bin:$PATH
+RUN wget http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+  tar -zxvf apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+  rm apache-maven-$MAVEN_VERSION-bin.tar.gz && \
+  mv apache-maven-$MAVEN_VERSION /usr/lib/mvn \
+  && mvn --version
+
+# BUILD EHRBASE (AND STORE ALL DEPENDENCIES)
+COPY . ~/ehrbase
+RUN mvn package -Dmaven.javadoc.skip=true
