@@ -94,7 +94,7 @@
 # RUN ifconfig
 # RUN cat /etc/hosts
 
-FROM openjdk:11 AS builder
+FROM maven:3.6.3-openjdk-11-slim AS builder
 WORKDIR /ehrbase
 
 COPY ./pom.xml ./pom.xml
