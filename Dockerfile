@@ -127,7 +127,9 @@ RUN su - postgres -c "pg_ctl -D ${PGDATA} -w start" \
   && mvn package -Dmaven.javadoc.skip=true
 
 RUN ls -la
-RUN cp application/target/application-0.13.0.jar /tmp/app.jar
+RUN EHRBASE_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec) \
+  && echo ${EHRBASE_VERSION} > /tmp/ehrbase_version \
+  && cp application/target/application-${EHRBASE_VERSION}.jar /tmp/app.jar
 
 
 
@@ -135,17 +137,26 @@ RUN cp application/target/application-0.13.0.jar /tmp/app.jar
 FROM openjdk:11-jre-slim AS pusher
 WORKDIR /ehrbase
 COPY --from=builder /tmp/app.jar .
+COPY --from=builder /tmp/ehrbase_version .
+COPY ./docker-entrypoint.sh .
+RUN chmod +x ./docker-entrypoint.sh
+RUN echo "EHRBASE_VERSION: $(cat ehrbase_version)"
 
-# Set default envs
-ARG EHRBASE_USER="ehrbase"
-ARG EHRBASE_PASSWORD="ehrbase"
-ARG DB_URL=jdbc:postgresql://localhost:5432/ehrbase
+
+# Set default ENVs (can be overriten from cli via --build-arg flag)
+ARG DB_URL=jdbc:postgresql://ehrdb:5432/ehrbase
+ARG DB_USER="ehrbase"
+ARG DB_PASS="ehrbase"
 ARG SYSTEM_NAME=docker.ehrbase.org
+ARG SECURITY_AUTHTYPE=NONE
 
-ENV EHRBASE_USER=${EHRBASE_USER}
-ENV EHRBASE_PASSWORD=${EHRBASE_PASSWORD}
-ENV DB_URL=${DB_URL}
-ENV SYSTEM_NAME=${SYSTEM_NAME}
+ENV EHRBASE_VERSION=${EHRBASE_VERSION}
+ENV DB_USER=$DB_USER
+ENV DB_PASS=$DB_PASS
+ENV DB_URL=$DB_URL
+ENV SYSTEM_NAME=$SYSTEM_NAME
+ENV SECURITY_AUTHTYPE=$SECURITY_AUTHTYPE
 
 EXPOSE 8080
-CMD ["java", "-Dspring.profiles.active=docker", "-jar", "/ehrbase/app.jar"]
+# CMD ["java", "-Dspring.profiles.active=docker", "-jar", "/ehrbase/app.jar"]
+CMD ./docker-entrypoint.sh
