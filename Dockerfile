@@ -120,13 +120,14 @@ RUN su - postgres -c "pg_ctl -D ${PGDATA} -w start" \
   && mvn compile
 
 # PACKAGE EHRBASE .JAR
-RUN mkdir -p /home/ehrbase
-COPY . /home/ehrbase
-RUN ls -la /home/ehrbase
+# RUN mkdir -p /home/ehrbase
+# COPY . /home/ehrbase
+RUN ls -la
 RUN su - postgres -c "pg_ctl -D ${PGDATA} -w start" \
   && mvn package -Dmaven.javadoc.skip=true
-RUN cd /home/ehrbase \
-  && cp application/target/application-0.13.0.jar /tmp/app.jar
+
+RUN ls -la
+RUN cp application/target/application-0.13.0.jar /tmp/app.jar
 
 
 
@@ -135,5 +136,16 @@ FROM openjdk:11-jre-slim AS pusher
 WORKDIR /ehrbase
 COPY --from=builder /tmp/app.jar .
 
+# Set default envs
+ARG EHRBASE_USER="ehrbase"
+ARG EHRBASE_PASSWORD="ehrbase"
+ARG DB_URL=jdbc:postgresql://localhost:5432/ehrbase
+ARG SYSTEM_NAME=docker.ehrbase.org
+
+ENV EHRBASE_USER=${EHRBASE_USER}
+ENV EHRBASE_PASSWORD=${EHRBASE_PASSWORD}
+ENV DB_URL=${DB_URL}
+ENV SYSTEM_NAME=${SYSTEM_NAME}
+
 EXPOSE 8080
-CMD ["java", "-jar", "/ehrbase/app.jar"]
+CMD ["java", "-Dspring.profiles.active=docker", "-jar", "/ehrbase/app.jar"]
