@@ -36,7 +36,7 @@ RUN apk --no-cache add libintl && \
 	apk del .locale_build
 
 # Copy init scripts to init directory
-COPY ././.docker_scripts/create-ehrbase-user.sh /docker-entrypoint-initdb.d/
+COPY ./.docker_scripts/create-ehrbase-user.sh /docker-entrypoint-initdb.d/
 
 # Initialize basic database cluster
 RUN sh -c "/usr/local/bin/docker-entrypoint.sh postgres & " && \
@@ -55,17 +55,17 @@ RUN apk add --update postgresql-dev \
                      bison
 
 # Install temporary_tables plugin
-COPY ././.docker_scripts/install-temporal-tables.sh .
+COPY ./.docker_scripts/install-temporal-tables.sh .
 RUN chmod +x ./install-temporal-tables.sh
 RUN sh -c "./install-temporal-tables.sh"
 
 # Install jsquery plugin
-COPY ././.docker_scripts/install-jsquery.sh .
+COPY ./.docker_scripts/install-jsquery.sh .
 RUN chmod +x ./install-jsquery.sh 
 RUN sh -c "./install-jsquery.sh"
 
 # Prepare database schemas
-COPY ././.docker_scripts/prepare-databases.sh .
+COPY ./.docker_scripts/prepare-databases.sh .
 RUN chmod +x ./prepare-databases.sh
 RUN sh -c "./prepare-databases.sh"
 
