@@ -36,7 +36,7 @@ RUN apk --no-cache add libintl && \
 	apk del .locale_build
 
 # Copy init scripts to init directory
-COPY ./scripts/create-ehrbase-user.sh /docker-entrypoint-initdb.d/
+COPY ././.docker_scripts/create-ehrbase-user.sh /docker-entrypoint-initdb.d/
 
 # Initialize basic database cluster
 RUN sh -c "/usr/local/bin/docker-entrypoint.sh postgres & " && \
@@ -55,19 +55,19 @@ RUN apk add --update postgresql-dev \
                      bison
 
 # Install temporary_tables plugin
-COPY ./scripts/install-temporal-tables.sh .
+COPY ././.docker_scripts/install-temporal-tables.sh .
 RUN chmod +x ./install-temporal-tables.sh
 RUN sh -c "./install-temporal-tables.sh"
 
 # Install jsquery plugin
-COPY ./scripts/install-jsquery.sh .
+COPY ././.docker_scripts/install-jsquery.sh .
 RUN chmod +x ./install-jsquery.sh 
 RUN sh -c "./install-jsquery.sh"
 
 # Prepare database schemas
-COPY ./scripts/start-databases.sh .
-RUN chmod +x ./start-databases.sh
-RUN sh -c "./start-databases.sh"
+COPY ././.docker_scripts/prepare-databases.sh .
+RUN chmod +x ./prepare-databases.sh
+RUN sh -c "./prepare-databases.sh"
 
 # Cleanup
 RUN rm -f -r ./jsquery
@@ -89,12 +89,8 @@ RUN wget http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/ap
   mv apache-maven-$MAVEN_VERSION /usr/lib/mvn \
   && mvn --version
 
-RUN ls -la
-RUN ls -la /home
-RUN ifconfig
-RUN cat /etc/hosts
-
 # CACHE EHRBASE DEPENDENCIES
+RUN ls -la
 COPY ./pom.xml ./pom.xml
 COPY ./api/pom.xml ./api/pom.xml
 COPY ./application/pom.xml ./application/pom.xml
@@ -120,8 +116,6 @@ RUN su - postgres -c "pg_ctl -D ${PGDATA} -w start" \
   && mvn compile
 
 # PACKAGE EHRBASE .JAR
-# RUN mkdir -p /home/ehrbase
-# COPY . /home/ehrbase
 RUN ls -la
 RUN su - postgres -c "pg_ctl -D ${PGDATA} -w start" \
   && mvn package -Dmaven.javadoc.skip=true
@@ -135,10 +129,10 @@ RUN EHRBASE_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.ver
 
 # FINAL IMAGE WITH JRE AND JAR ONLY
 FROM openjdk:11-jre-slim AS pusher
-WORKDIR /ehrbase
+# WORKDIR /ehrbase
 COPY --from=builder /tmp/app.jar .
 COPY --from=builder /tmp/ehrbase_version .
-COPY ./docker-entrypoint.sh .
+COPY ./.docker_scripts/docker-entrypoint.sh .
 RUN chmod +x ./docker-entrypoint.sh
 RUN echo "EHRBASE_VERSION: $(cat ehrbase_version)"
 
