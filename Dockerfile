@@ -129,7 +129,6 @@ RUN EHRBASE_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.ver
 
 # FINAL IMAGE WITH JRE AND JAR ONLY
 FROM openjdk:11-jre-slim AS pusher
-# WORKDIR /ehrbase
 COPY --from=builder /tmp/ehrbase.jar .
 COPY --from=builder /tmp/ehrbase_version .
 COPY .docker_scripts/docker-entrypoint.sh .
@@ -152,5 +151,4 @@ ENV SYSTEM_NAME=$SYSTEM_NAME
 ENV SECURITY_AUTHTYPE=$SECURITY_AUTHTYPE
 
 EXPOSE 8080
-# CMD ["java", "-Dspring.profiles.active=docker", "-jar", "/ehrbase/ehrbase.jar"]
 CMD ./docker-entrypoint.sh

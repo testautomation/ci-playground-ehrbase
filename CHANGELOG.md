@@ -9,10 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+
+
+## [0.14.0] (beta)
+
+### Added
+
 - Add admin API endpoint stubs (see: https://github.com/ehrbase/ehrbase/pull/280)
 - Add support for FeederAudit in Locatable. Refactored Composition Serializer for DB encoding (see https://github.com/ehrbase/ehrbase/tree/feature/311_feeder_audit, https://github.com/ehrbase/openEHR_SDK/tree/feature/311_feeder_audit)
 - Change the strategy to resolve CONTAINS in AQL (https://github.com/ehrbase/ehrbase/pull/276)
+- Add admin template API functionality (see: https://github.com/ehrbase/ehrbase/pull/301)
 - Persist caches to java.io.tmpdir  (see: https://github.com/ehrbase/ehrbase/pull/308)
+- Precalculate containment tree from OPT template (see https://github.com/ehrbase/ehrbase/pull/312) 
 
 ### Changed
 
@@ -20,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Using ObjectVersionId for DIRECTORY Controller and Service Layers (see: https://github.com/ehrbase/ehrbase/pull/297)
 - Added Junit5 support via spring-boot-starter-test (https://github.com/ehrbase/ehrbase/pull/298)
 - Enable cartesian products on embedded arrays in JSONB (see https://github.com/ehrbase/ehrbase/pull/309)
+- Use new OPT-Parser from sdk (see https://github.com/ehrbase/ehrbase/pull/314)
 
 ### Fixed
 
@@ -146,7 +159,7 @@ Starting with the next release this file will provide a proper overview.
 - Spring configuration allows setting the System ID
 - Validation of openEHR Terminology (openEHR terminology codes are tested against an internal terminology service)
 
-###Fixed
+### Fixed
 
 - Order of columns in AQL result sets are now reliably preserved (https://github.com/ehrbase/ehrbase/issues/37)
 - Some projection issues for EHR attributes have been resolved in AQL
@@ -166,14 +179,15 @@ Starting with the next release this file will provide a proper overview.
 - Spring configuration allows setting the System ID
 - Validation of openEHR Terminology (openEHR terminology codes are tested against an internal terminology service)
 
-###Fixed
+### Fixed
 
 - Order of columns in AQL result sets are now reliably preserved (https://github.com/ehrbase/ehrbase/issues/37)
 - Some projection issues for EHR attributes have been resolved in AQL
 - Fixed error regarding DISTINCT operator in AQL (https://github.com/ehrbase/ehrbase/issues/50)
 - Fixed null pointer exceptions that could occur in persistent compositions
 
-[unreleased]: https://github.com/ehrbase/ehrbase/compare/v0.13.0...HEAD
+[unreleased]: https://github.com/ehrbase/ehrbase/compare/v0.14.0...HEAD
+[0.14.0]: https://github.com/ehrbase/ehrbase/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/ehrbase/ehrbase/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/ehrbase/ehrbase/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/ehrbase/ehrbase/compare/v0.10.0...v0.11.0
