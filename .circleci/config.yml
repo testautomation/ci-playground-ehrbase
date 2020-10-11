@@ -32,15 +32,15 @@ workflows:
   # WORKFLOW 1/3
   build-and-test:
     jobs:
-      # - build-ehrbase:
-      #     context: org-global
-      #     filters:
-      #       branches:
-      #         ignore:
-      #           - /release\/.*/
-      #           - master
-      #           - /sync\/.*/
-      #           - /feature/sync\/.*/
+      - build-ehrbase:
+          context: org-global
+          filters:
+            branches:
+              ignore:
+                - /release\/.*/
+                - master
+                - /sync\/.*/
+                - /feature/sync\/.*/
       
       # - run-SDK-integration-tests:
       #     context: org-global
@@ -110,8 +110,8 @@ workflows:
       
       - QUERYSERVICE-smoke:
           context: org-global
-          # requires:
-          #   - build-ehrbase
+          requires:
+            - build-ehrbase
 
       # - QUERYSERVICE-test-2:
       #     context: org-global
@@ -471,20 +471,20 @@ jobs:
 
 
   build-ehrbase:
-    # executor: docker-py3-java11-postgres
-    executor: machine-ubuntu-2004
+    executor: docker-py3-java11-postgres
+    # executor: machine-ubuntu-2004
     steps:
       - checkout
-      # - install-maven
-      # - restore-build-ehrbase-job-caches
-      # - maven-package
-      # - save-packaged-ehrbase-jar
-      # - save-build-ehrbase-job-caches
-      # - collect-ehrbase-unittest-results
-      # - save-ehrbase-test-results
+      - install-maven
+      - restore-build-ehrbase-job-caches
+      - maven-package
+      - save-packaged-ehrbase-jar
+      - save-build-ehrbase-job-caches
+      - collect-ehrbase-unittest-results
+      - save-ehrbase-test-results
       - run: echo MOCKED JOB 1          # USE FOR PIPELINE DEBUGGING ONLY
-      - cache-out-ehrbase-workspace     # USE FOR PIPELINE DEBUGGING ONLY
-      # - cache-in-ehrbase-workspace    # USE FOR PIPELINE DEBUGGING ONLY
+      # - cache-out-ehrbase-workspace     # USE FOR PIPELINE DEBUGGING ONLY
+      - cache-in-ehrbase-workspace    # USE FOR PIPELINE DEBUGGING ONLY
 
 
   run-SDK-integration-tests:
@@ -616,7 +616,6 @@ jobs:
   
 
   QUERYSERVICE-smoke:
-    # executor: docker-py3-java11-postgres
     executor: machine-ubuntu-2004
     environment:
       SUT: TEST
@@ -649,12 +648,9 @@ jobs:
             [ "$ACTUAL_HASH" = "$EXPECTED_HASH" ] && echo "Expected results unchanged!  Don't regenerate test-data!" || echo "Expected result data-sets changed. Regenerate!" > /tmp/DATA_CHANGED_NOTICE
       - run-robot-tests:
           sut: "SUT:TEST"
-          # include-tags: "SMOKE"
-          # test-suite-path: "QUERY_SERVICE_TESTS"
-          # test-suite-name: "ADHOC-QUERY-SMOKE"
-          include-tags: "aql_adhoc-queryANDloaded_db"
+          include-tags: "SMOKE"
           test-suite-path: "QUERY_SERVICE_TESTS"
-          test-suite-name: "ADHOC-QUERY-2"
+          test-suite-name: "ADHOC-QUERY-SMOKE"
       - save_cache:
           key: expected-results-loaded-db-v5-{{ checksum "/tmp/expected-results-loaded_db-seed" }}
           paths:
