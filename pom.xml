@@ -126,7 +126,7 @@
         <database.pass>ehrbase</database.pass>
         <database.port>5432</database.port>
         <database.host>localhost</database.host>
-        <spring-boot.version>2.2.6.RELEASE</spring-boot.version>
+        <spring-boot.version>2.3.0.RELEASE</spring-boot.version>
     </properties>
 
     <!-- Spring Boot starter parent is taking over most parts of the dependency management -->
@@ -450,7 +450,7 @@
                     <artifactId>dockerfile-maven-plugin</artifactId>
                     <version>1.4.13</version>
                     <configuration>
-                        <dockerConfigFile></dockerConfigFile>
+                        <dockerConfigFile/>
                     </configuration>
                 </plugin>
                 <plugin>
